@@ -4,9 +4,13 @@ const bodyParser=require('body-parser')
 const mongoose=require('mongoose')
 const User = require('./models/User')
 
+const productRoutes=require('.../models/ProductRoutes.js')
+
 const server=express()
 server.use(cors())
 server.use(bodyParser.json())
+server.use('/product',productRoutes)
+
 
 mongoose.connect('mongodb+srv://rohan:Rohan%40123@cluster0.ajnxzuq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0').then(()=>console.log('Database is connected')) .catch((err)=>console.log(err))
 
@@ -14,11 +18,11 @@ server.post('/register',async(req,res)=>{
     try{
         const {fullName,userName,age,password}=req.body
         const userObj= new User({fullName,userName,age,password})
-        const userExist=await User.findOne({userName})
-        if(userExist){
+        const userExit=await User.findOne({userName})
+        if(userExit){
             return res.json({
                 status:false,
-                message:'User already exist'
+                message:'user already exit'
             })
         }
         await userObj.save()
@@ -36,32 +40,34 @@ server.post('/register',async(req,res)=>{
 })
 server.post('/login',async(req,res)=>{
     try{
-        const{userName,password}=req.body
-        const userExist=await User.findOne({userName})
-        if(!userExist){
+        const {userName,password}=req.body
+        const userExit=await User.findOne({userName})
+        if(!userExit){
             return res.json({
                 status:false,
-                message:'User not found'
+                message:'user not found'
             })
         }
-        if(password!==userExist.password){
+        if(password !==userExit.password){
             return res.json({
                 status:false,
-                message:'Password is incorrect'
+                message:'Incorrect password'
             })
         }
         res.json({
             status:true,
-            message:'User logged in successfully'
+            message:'Login successfully'
         })
     }
     catch(error){
         res.json({
             status:false,
-            message:`error:${error}`
-        })
+            message:`Error ${error}`
+        }) 
     }
 })
+
 server.listen(8055,()=>{
     console.log('server is listen on port no 8055')
 })
+ 
